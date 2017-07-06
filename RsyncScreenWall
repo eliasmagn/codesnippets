@@ -1,4 +1,5 @@
 #!/bash
+#Copyright 2013 EMH
 #THE COMMAND IS A ONELINER FOR BASH 
 #COPY THE DIRECTORY FROM REMOTE HOST TO LOCAL DIRECTORY USING RSYNC_SSH
 #--exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"}

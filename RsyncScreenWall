@@ -1,16 +1,23 @@
 #!/bash
 #THE COMMAND IS A ONELINER FOR BASH 
 #COPY THE DIRECTORY FROM REMOTE HOST TO LOCAL DIRECTORY USING RSYNC_SSH
-#RUNNING IN SCREEN SESSION 
+#--exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"}
+#RUNNING IN SCREEN SESSION NAMED baksync
 #ANNOUNCES START AND FINISH IN TERMINAL SESSOINS WITH WALL COMMAND 
 #INTENDET TO BE RUN AS PRIVILIDGED USER(ROOT) ON ROOT FS /
 #FEEL FREE TO ADD VARIABLES; ALL CREDITS BELONGS TO ME _ XD
 #HAGT
+#REMEMBER --sparse --inplace
 
 
 
 screen -d -m -S "baksync" bash -c 'wall <<< 'THE BACKUP IS STARTED!';\
 rsync -aAXHSv --progress --log-file=/path/to/file/master_rsync.log --human-readable --numeric-ids \
---exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} \
+--sparse --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} \
 someone@somewhere.net:/path/to/source/directory /path/to/destination/directory ; \
 wall <<< 'BACKUP DONE!' ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit'
+
+
+##
+
+screen -d -m -S "baksync" bash -c 'wall <<< "THE BACKUP IS STARTED--> press ENTER"; rsync -aAXHSv --sparse --delete  --progress --log-file=/private-backups/dservers/hostname/master_rsync.log --human-readable --numeric-ids --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} root@hostname:/ /private-backups/dservers/hostname/master ; wall <<< "BACKUP DONE!" ; wall <<< $(tail /private-backups/dservers/hostname/master_rsync.log); screen -X -S baksync quit'

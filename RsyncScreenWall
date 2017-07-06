@@ -10,13 +10,21 @@
 #HAGT
 #REMEMBER --sparse --inplace
 
-ssh user@host screen -d -m -S "baksync" bash -c 'wall <<< "THE BACKUP IS STARTED!";\
+$(ssh user@host $(mkdir -p /private-backup; cd /private-backup; if [ -f "dumpmysql.db.01.oldest.gz" ]; \
+then if [ -f dumpmysql.db.fom.*.gz ]; then echo "iffirst"; rm dumpmysql.db.fom.*.gz; fi; \
+mv dumpmysql.db.01.oldest.gz dumpmysql.db.fom.$(($(date +%Y%m%H%M)-10000)).gz; fi; \
+if [ -f dumpmysql.db.*.previous.gz ]; then PREVIOUSFILE=$(ls dumpmysql.db.*.previous.gz); \
+mv dumpmysql.db.${PREVIOUSFILE:13:2}.previous.gz dumpmysql.db.${PREVIOUSFILE:13:2}.oldest.gz; else echo $PREVIOUSFILE "<-NPRFILE"; fi; \
+if [ -f dumpmysql.db.*.latest.gz ]; then LATESTFILE=$(ls dumpmysql.db.*.latest.gz); \
+mv dumpmysql.db.${LATESTFILE:13:2}.latest.gz dumpmysql.db.${LATESTFILE:13:2}.previous.gz; else echo $LATESTFILE "<-NLRFILE"; fi; \
+MYSQL_PWD=`cat /etc/psa/.psa.shadow`; mysqldump -x --all-databases -u admin -p$MYSQL_PWD | gzip > dumpmysql.db.$(date +%d).latest.gz;))
+$( screen -d -m -S "baksync" bash -c 'wall <<< "THE BACKUP IS STARTED!"; \
 rsync -aAXHSv --progress --log-file=/path/to/file/master_rsync.log --human-readable --numeric-ids \
 --sparse --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} \
 someone@somewhere.net:/path/to/source/directory /path/to/destination/directory ; \
-wall <<< "BACKUP DONE!" ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit'
+wall <<< "BACKUP DONE!" ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit')
 
 
 ##
-
-screen -d -m -S "baksync" bash -c 'wall <<< "THE BACKUP IS STARTED--> press ENTER"; rsync -aAXHSv --sparse --delete  --progress --log-file=/private-backups/dservers/hostname/master_rsync.log --human-readable --numeric-ids --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} root@hostname:/ /private-backups/dservers/hostname/master ; wall <<< "BACKUP DONE!" ; wall <<< $(tail /private-backups/dservers/hostname/master_rsync.log); screen -X -S baksync quit'
+##END
+##

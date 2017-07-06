@@ -1,6 +1,8 @@
 
 
- codesnippets (c)EMH
+ codesnippets 
+ 
+Copyright 2013 EMH
 All scripts and programms in this repository(eliasmagn/codesnippets) 
 are licensed under GPL version 3.  
 You should have received a copy of the GNU General Public License along 

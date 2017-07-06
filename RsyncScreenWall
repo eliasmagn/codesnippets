@@ -10,13 +10,11 @@
 #HAGT
 #REMEMBER --sparse --inplace
 
-
-
-screen -d -m -S "baksync" bash -c 'wall <<< 'THE BACKUP IS STARTED!';\
+ssh user@host screen -d -m -S "baksync" bash -c 'wall <<< "THE BACKUP IS STARTED!";\
 rsync -aAXHSv --progress --log-file=/path/to/file/master_rsync.log --human-readable --numeric-ids \
 --sparse --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} \
 someone@somewhere.net:/path/to/source/directory /path/to/destination/directory ; \
-wall <<< 'BACKUP DONE!' ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit'
+wall <<< "BACKUP DONE!" ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit'
 
 
 ##

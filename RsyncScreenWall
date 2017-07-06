@@ -1,16 +1,16 @@
 #!/bash
 #Copyright 2013 EMH
-#THE COMMAND IS A ONELINER FOR BASH 
-#COPY THE DIRECTORY FROM REMOTE HOST TO LOCAL DIRECTORY USING RSYNC_SSH
+#THE COMMAND IS A ONELINER FOR BASH DUMPMYSQLSQL SNAPSHOT FOR PLESK AND
+#COPY THE ROOT DIRECTORY FROM REMOTE HOST TO LOCAL DIRECTORY USING RSYNC_SSH EXCLUDING
 #--exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"}
 #RUNNING IN SCREEN SESSION NAMED baksync
 #ANNOUNCES START AND FINISH IN TERMINAL SESSOINS WITH WALL COMMAND 
-#INTENDET TO BE RUN AS PRIVILIDGED USER(ROOT) ON ROOT FS /
+#INTENDET TO BE RUN AS PRIVILIDGED USER(ROOT) 
 #FEEL FREE TO ADD VARIABLES; ALL CREDITS BELONGS TO ME _ XD
 #HAGT
 #REMEMBER --sparse --inplace
 
-$(ssh user@host $(mkdir -p /private-backup; cd /private-backup; if [ -f "dumpmysql.db.01.oldest.gz" ]; \
+$(ssh root@host $(mkdir -p /private-backup; cd /private-backup; if [ -f "dumpmysql.db.01.oldest.gz" ]; \
 then if [ -f dumpmysql.db.fom.*.gz ]; then echo "iffirst"; rm dumpmysql.db.fom.*.gz; fi; \
 mv dumpmysql.db.01.oldest.gz dumpmysql.db.fom.$(($(date +%Y%m%H%M)-10000)).gz; fi; \
 if [ -f dumpmysql.db.*.previous.gz ]; then PREVIOUSFILE=$(ls dumpmysql.db.*.previous.gz); \
@@ -22,7 +22,7 @@ $( screen -d -m -S "baksync" bash -c \'wall <<< "BACKUP!  THE BACKUP WILL START 
 sleep 5; wall -n <<< "STARTS IN 5";sleep 4;wall -n <<< "THE BACKUP IS RUNNING!"; \
 rsync -aAXHSv --progress --log-file=/path/to/file/master_rsync.log --human-readable --numeric-ids \
 --sparse --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} \
-someone@somewhere.net:/path/to/source/directory /path/to/destination/directory ; \
+root@somewhere.net:/path/to/source/directory /path/to/destination/directory ; \
 wall <<< "BACKUP DONE!" ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit')
 
 

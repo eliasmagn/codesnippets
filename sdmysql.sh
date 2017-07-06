@@ -27,7 +27,7 @@ if [ -f dumpmysql.db.*.latest.gz ]; then
 LATESTFILE=$(ls dumpmysql.db.*.latest.gz);
 mv dumpmysql.db.${LATESTFILE:13:2}.latest.gz dumpmysql.db.${LATESTFILE:13:2}.previous.gz
 else
-echo $LATESTFILE "<-NPRFILE"
+echo $LATESTFILE "<-NLRFILE"
 fi
 #mainpart edited for plesk
 MYSQL_PWD=`cat /etc/psa/.psa.shadow`; mysqldump -x --all-databases \

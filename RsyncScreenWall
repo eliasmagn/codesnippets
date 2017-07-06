@@ -1,0 +1,16 @@
+#!/bash
+#THE COMMAND IS A ONELINER FOR BASH 
+#COPY THE DIRECTORY FROM REMOTE HOST TO LOCAL DIRECTORY USING RSYNC_SSH
+#RUNNING IN SCREEN SESSION 
+#ANNOUNCES START AND FINISH IN TERMINAL SESSOINS WITH WALL COMMAND 
+#INTENDET TO BE RUN AS PRIVILIDGED USER(ROOT) ON ROOT FS /
+#FEEL FREE TO ADD VARIABLES; ALL CREDITS BELONGS TO ME _ XD
+#HAGT
+
+
+
+screen -d -m -S "baksync" bash -c 'wall <<< 'THE BACKUP IS STARTED!';\
+rsync -aAXHSv --progress --log-file=/path/to/file/master_rsync.log --human-readable --numeric-ids \
+--exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} \
+someone@somewhere.net:/path/to/source/directory /path/to/destination/directory ; \
+wall <<< 'BACKUP DONE!' ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit'

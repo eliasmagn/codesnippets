@@ -10,22 +10,22 @@
 #HAGT
 #REMEMBER --sparse --inplace
 
-$(ssh root@host $(mkdir -p /private-backup; cd /private-backup; if [ -f "dumpmysql.db.01.oldest.gz" ]; \
+ssh root@somewhere.net $(mkdir -p /private-backup; cd /private-backup; if [ -f "dumpmysql.db.01.oldest.gz" ]; \
 then if [ -f dumpmysql.db.fom.*.gz ]; then echo "iffirst"; rm dumpmysql.db.fom.*.gz; fi; \
 mv dumpmysql.db.01.oldest.gz dumpmysql.db.fom.$(($(date +%Y%m%H%M)-10000)).gz; fi; \
 if [ -f dumpmysql.db.*.previous.gz ]; then PREVIOUSFILE=$(ls dumpmysql.db.*.previous.gz); \
 mv dumpmysql.db.${PREVIOUSFILE:13:2}.previous.gz dumpmysql.db.${PREVIOUSFILE:13:2}.oldest.gz; else echo $PREVIOUSFILE "<-NPRFILE"; fi; \
 if [ -f dumpmysql.db.*.latest.gz ]; then LATESTFILE=$(ls dumpmysql.db.*.latest.gz); \
 mv dumpmysql.db.${LATESTFILE:13:2}.latest.gz dumpmysql.db.${LATESTFILE:13:2}.previous.gz; else echo $LATESTFILE "<-NLRFILE"; fi; \
-MYSQL_PWD=`cat /etc/psa/.psa.shadow`; mysqldump -x --all-databases -u admin -p$MYSQL_PWD | gzip > dumpmysql.db.$(date +%d).latest.gz;))
+MYSQL_PWD=`cat /etc/psa/.psa.shadow`; mysqldump -x --all-databases -u admin -p$MYSQL_PWD | gzip > dumpmysql.db.$(date +%d).latest.gz;)); \
+&& \
 $( screen -d -m -S "baksync" bash -c \'wall <<< "BACKUP!  THE BACKUP WILL START IN 10 SECONDS! MYSQL is DUMPED!    BACKUP!        BACKUP!  Do not shutdown nor reboot the server! CAUTION!      BACKUP!        "; \
 sleep 5; wall -n <<< "STARTS IN 5";sleep 4;wall -n <<< "THE BACKUP IS RUNNING!"; \
 rsync -aAXHSv --progress --log-file=/path/to/file/master_rsync.log --human-readable --numeric-ids \
 --sparse --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/var/lib/docker/devicemapper/*"} \
 root@somewhere.net:/path/to/source/directory /path/to/destination/directory ; \
-wall <<< "BACKUP DONE!" ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit')
+wall <<< "BACKUP DONE!" ; wall <<< $(tail /path/to/file/master_rsync.log); screen -X -S baksync quit');
 
 
 ##
 ##END
-##wall <<< "BACKUP!  THE BACKUP WILL START IN 10 SECONDS! MYSQL is DUMPED!    BACKUP!        BACKUP!  Do not shutdown nor reboot the server! CAUTION!      BACKUP!        "; sleep 5; wall -n <<< "STARTS IN 5";sleep 4;wall -n <<< "THE BACKUP IS RUNNING!";
